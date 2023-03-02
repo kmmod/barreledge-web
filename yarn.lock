@@ -2,6 +2,11 @@
 # yarn lockfile v1
 
 
+"@babylonjs/core@^5.49.0":
+  version "5.49.0"
+  resolved "https://registry.yarnpkg.com/@babylonjs/core/-/core-5.49.0.tgz#57cd6999ae1a1102799d490d8586ab8800d81f9b"
+  integrity sha512-7DImzPWYqx8ZUIiBQbPMZWZOjCsNU1W50rGCEMg79vB1GJWicwoXG9fNCsnoK0P7vN6GhqpqwpKADYKQT/ngkg==
+
 "@bcoe/v8-coverage@^0.2.3":
   version "0.2.3"
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
