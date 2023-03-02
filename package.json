@@ -1,0 +1,26 @@
+{
+  "name": "barreledge",
+  "version": "0.0.0",
+  "description": "Boomer shooter for the web",
+  "repository": "git@github.com:kmmod/barreledge.git",
+  "author": "Kamil Modzelewski <modzelewski.kamil@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "vite",
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "fix": "prettier --write ."
+  },
+  "devDependencies": {
+    "@vitest/coverage-c8": "^0.28.5",
+    "prettier": "2.8.4",
+    "typescript": "^4.9.4",
+    "vite": "^4.0.3",
+    "vitest": "^0.28.4",
+    "vitest-canvas-mock": "^0.2.2"
+  }
+}
