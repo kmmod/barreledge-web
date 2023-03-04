@@ -12,6 +12,7 @@ import { Scene } from "@babylonjs/core/scene";
 import { Vector3 } from "@babylonjs/core/Maths/math.vector";
 
 import { Player } from "./player/player";
+import { CreateBox, Mesh } from "@babylonjs/core/Meshes";
 
 window.CANNON = cannon;
 
@@ -57,9 +58,11 @@ class App {
     sphere.physicsImpostor = new PhysicsImpostor(
       sphere,
       PhysicsImpostor.SphereImpostor,
-      { mass: 25, restitution: 0.0 },
+      { mass: 5, restitution: 0.01, friction: 0.5 },
       this.scene
     );
+
+    sphere.physicsImpostor.physicsBody.angularDamping = 0.8;
 
     sphere.checkCollisions = true;
 
@@ -72,7 +75,7 @@ class App {
     ground.physicsImpostor = new PhysicsImpostor(
       ground,
       PhysicsImpostor.BoxImpostor,
-      { mass: 0, restitution: 0.9 },
+      { mass: 0, restitution: 0.9, friction: 0.5 },
       this.scene
     );
 
@@ -94,13 +97,33 @@ class App {
     );
 
     slope.checkCollisions = true;
+
+    for (let i = 0; i < 20; i++) {
+      const stair = CreateBox(
+        "stair1",
+        { width: 11, height: 1, depth: 5 },
+        this.scene
+      );
+      stair.position.x = 20 - i;
+      stair.position.y = 0.5 * i;
+      stair.position.z = 10 + 2 * i;
+
+      stair.physicsImpostor = new PhysicsImpostor(
+        stair,
+        PhysicsImpostor.BoxImpostor,
+        { mass: 0, restitution: 1 },
+        this.scene
+      );
+
+      stair.checkCollisions = true;
+    }
   }
 
   init(): void {
     this.canvas.addEventListener("click", () => {
       this.canvas.requestPointerLock();
     });
-    
+
     window.addEventListener("resize", () => {
       this.engine.resize();
     });

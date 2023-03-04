@@ -2,7 +2,9 @@ import { AbstractMesh, MeshBuilder } from "@babylonjs/core/Meshes";
 import { FreeCamera } from "@babylonjs/core/Cameras/freeCamera";
 import { Scene } from "@babylonjs/core/scene";
 import { Vector3 } from "@babylonjs/core/Maths/math";
+import { Scalar } from "@babylonjs/core/Maths/math.scalar";
 import { PlayerInput } from "./input";
+import { Ray } from "@babylonjs/core/Culling/ray";
 
 export class Player {
   scene: Scene;
@@ -12,6 +14,8 @@ export class Player {
   camera: FreeCamera;
   velocity: Vector3;
   movementVector: Vector3;
+  speed: number;
+  velocityDamping: number;
 
   constructor(scene: Scene, canvas: HTMLCanvasElement) {
     this.scene = scene;
@@ -21,6 +25,8 @@ export class Player {
     this.camera = this.createCamera();
     this.velocity = new Vector3(0, 0, 0);
     this.movementVector = new Vector3(0, 0, 0);
+    this.speed = 0.25;
+    this.velocityDamping = 0.1;
     this.init();
   }
 
@@ -31,12 +37,16 @@ export class Player {
   }
 
   private createCamera(): FreeCamera {
-    const camera = new FreeCamera("player", new Vector3(0, 1, 0), this.scene);
-    camera.setTarget(new Vector3(2, 1, 0));
+    const camera = new FreeCamera(
+      "player",
+      new Vector3(0, 0.75, 0),
+      this.scene
+    );
+    camera.setTarget(new Vector3(2, 0.75, 0));
     camera.attachControl(this.canvas, true);
     camera.speed = 0.0;
-    camera.angularSensibility = 2000;
-    camera.inertia = 0.8;
+    camera.angularSensibility = 1500;
+    camera.inertia = 0.65;
     camera.parent = this.collider;
     camera.fov = 1.5;
     return camera;
@@ -45,7 +55,7 @@ export class Player {
   private playerCollider(): AbstractMesh {
     const capsule = MeshBuilder.CreateCapsule(
       "playerCollider",
-      { tessellation: 8, subdivisions: 1, capSubdivisions: 2 },
+      { tessellation: 12, subdivisions: 1, capSubdivisions: 4 },
       this.scene
     );
     capsule.position.y = 5;
@@ -57,11 +67,13 @@ export class Player {
           collider
             .getAbsolutePosition()
             .subtract(capsule.getAbsolutePosition())
-            .normalize(),
+            .normalize()
+            .scale(15.0),
           collider.getAbsolutePosition()
         );
       }
     };
+    capsule.ellipsoid = new Vector3(0.5, 0.75, 0.5);
     capsule.checkCollisions = true;
     return capsule;
   }
@@ -70,7 +82,7 @@ export class Player {
     this.camera.attachControl(this.canvas, true);
   }
 
-  updateMovementVector(): void {
+  private updateMovementVector(): void {
     this.movementVector.x =
       this.input.inputVector.x * Math.cos(this.camera.rotation.y) +
       this.input.inputVector.z * Math.sin(this.camera.rotation.y);
@@ -79,16 +91,39 @@ export class Player {
       this.input.inputVector.x * Math.sin(this.camera.rotation.y * -1) +
       this.input.inputVector.z * Math.cos(this.camera.rotation.y * -1);
 
-    this.movementVector.y -= 0.1;
+    this.movementVector.y = 0;
+    this.movementVector.normalize().scaleInPlace(this.speed);
   }
 
-  updateVelocity(): void {
-    this.velocity = Vector3.Lerp(this.velocity, this.movementVector, 0.1);
+  private isGrounded(): boolean {
+    const ray = new Ray(this.collider.position, new Vector3(0, -1, 0), 1.1);
+    const hit = this.scene.pickWithRay(ray, (mesh) => mesh !== this.collider);
+    return (hit && hit.hit) || false;
+  }
+
+  private updateVelocity(): void {
+    if (this.isGrounded() && this.input.inputVector.y > 0.0) {
+      this.velocity.y = 0.25;
+    } else if (this.isGrounded()) {
+      this.velocity.y = 0.0;
+    } else {
+      this.velocity.y -= 0.01;
+    }
+    this.velocity.x = Scalar.Lerp(
+      this.velocity.x,
+      this.movementVector.x,
+      this.velocityDamping
+    );
+    this.velocity.z = Scalar.Lerp(
+      this.velocity.z,
+      this.movementVector.z,
+      this.velocityDamping
+    );
   }
 
   update(): void {
     this.updateMovementVector();
     this.updateVelocity();
-    this.collider.moveWithCollisions(this.velocity.scale(0.1));
+    this.collider.moveWithCollisions(this.velocity);
   }
 }

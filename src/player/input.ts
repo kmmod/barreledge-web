@@ -1,9 +1,7 @@
 import { ActionManager } from "@babylonjs/core/Actions/actionManager";
 import { ExecuteCodeAction } from "@babylonjs/core/Actions/directActions";
-import { PointerEventTypes } from "@babylonjs/core/Events/pointerEvents";
 import { Vector3 } from "@babylonjs/core/Maths/math";
 import { Scene } from "@babylonjs/core/scene";
-import { Scalar } from "@babylonjs/core/Maths/math.scalar";
 
 export class PlayerInput {
   scene: Scene;
@@ -11,7 +9,7 @@ export class PlayerInput {
   verticalAxis: number;
   horizontalAxis: number;
   jumpValue: number;
-    inputVector: Vector3;
+  inputVector: Vector3;
 
   constructor(scene: Scene) {
     this.scene = scene;
@@ -38,10 +36,6 @@ export class PlayerInput {
     this.scene.onBeforeRenderObservable.add(() => {
       this.update();
     });
-  }
-
-  getInputVector(): Vector3 {
-    return this.inputVector;
   }
 
   update(): void {
