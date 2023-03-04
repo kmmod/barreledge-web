@@ -1,7 +1,9 @@
 import { ActionManager } from "@babylonjs/core/Actions/actionManager";
 import { ExecuteCodeAction } from "@babylonjs/core/Actions/directActions";
+import { PointerEventTypes } from "@babylonjs/core/Events/pointerEvents";
 import { Vector3 } from "@babylonjs/core/Maths/math";
 import { Scene } from "@babylonjs/core/scene";
+import { Scalar } from "@babylonjs/core/Maths/math.scalar";
 
 export class PlayerInput {
   scene: Scene;
@@ -9,12 +11,14 @@ export class PlayerInput {
   verticalAxis: number;
   horizontalAxis: number;
   jumpValue: number;
+    inputVector: Vector3;
 
   constructor(scene: Scene) {
     this.scene = scene;
     this.inputMap = {};
     this.verticalAxis = 0;
     this.horizontalAxis = 0;
+    this.inputVector = new Vector3(0, 0, 0);
     this.jumpValue = 0;
     this.init();
   }
@@ -37,28 +41,28 @@ export class PlayerInput {
   }
 
   getInputVector(): Vector3 {
-    return new Vector3(this.horizontalAxis, 0, this.verticalAxis);
+    return this.inputVector;
   }
 
   update(): void {
     if (this.inputMap["w"] || this.inputMap["ArrowUp"]) {
-      this.verticalAxis = 1;
+      this.inputVector.z = 1;
     } else if (this.inputMap["s"] || this.inputMap["ArrowDown"]) {
-      this.verticalAxis = -1;
+      this.inputVector.z = -1;
     } else {
-      this.verticalAxis = 0;
+      this.inputVector.z = 0;
     }
     if (this.inputMap["a"] || this.inputMap["ArrowLeft"]) {
-      this.horizontalAxis = -1;
+      this.inputVector.x = -1;
     } else if (this.inputMap["d"] || this.inputMap["ArrowRight"]) {
-      this.horizontalAxis = 1;
+      this.inputVector.x = 1;
     } else {
-      this.horizontalAxis = 0;
+      this.inputVector.x = 0;
     }
     if (this.inputMap[" "]) {
-      this.jumpValue = 1;
+      this.inputVector.y = 1;
     } else {
-      this.jumpValue = 0;
+      this.inputVector.y = 0;
     }
   }
 }

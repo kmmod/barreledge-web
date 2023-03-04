@@ -97,6 +97,10 @@ class App {
   }
 
   init(): void {
+    this.canvas.addEventListener("click", () => {
+      this.canvas.requestPointerLock();
+    });
+    
     window.addEventListener("resize", () => {
       this.engine.resize();
     });

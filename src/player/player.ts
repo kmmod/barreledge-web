@@ -10,6 +10,8 @@ export class Player {
   input: PlayerInput;
   collider: AbstractMesh;
   camera: FreeCamera;
+  velocity: Vector3;
+  movementVector: Vector3;
 
   constructor(scene: Scene, canvas: HTMLCanvasElement) {
     this.scene = scene;
@@ -17,6 +19,8 @@ export class Player {
     this.input = new PlayerInput(this.scene);
     this.collider = this.playerCollider();
     this.camera = this.createCamera();
+    this.velocity = new Vector3(0, 0, 0);
+    this.movementVector = new Vector3(0, 0, 0);
     this.init();
   }
 
@@ -32,7 +36,9 @@ export class Player {
     camera.attachControl(this.canvas, true);
     camera.speed = 0.0;
     camera.angularSensibility = 2000;
+    camera.inertia = 0.8;
     camera.parent = this.collider;
+    camera.fov = 1.5;
     return camera;
   }
 
@@ -64,17 +70,25 @@ export class Player {
     this.camera.attachControl(this.canvas, true);
   }
 
-  getMovementVector(): Vector3 {
-    const inputVector = this.input.getInputVector();
-    const direction = this.camera.getDirection(inputVector);
-    // TODO: gravity should include slope normal to prevent sliding to some
-    // degree (pun intended)
-    const gravity = this.input.jumpValue > 0 ? 1 : -1;
-    const movementVector = new Vector3(direction.x, gravity, direction.z);
-    return movementVector.scale(0.1);
+  updateMovementVector(): void {
+    this.movementVector.x =
+      this.input.inputVector.x * Math.cos(this.camera.rotation.y) +
+      this.input.inputVector.z * Math.sin(this.camera.rotation.y);
+
+    this.movementVector.z =
+      this.input.inputVector.x * Math.sin(this.camera.rotation.y * -1) +
+      this.input.inputVector.z * Math.cos(this.camera.rotation.y * -1);
+
+    this.movementVector.y -= 0.1;
+  }
+
+  updateVelocity(): void {
+    this.velocity = Vector3.Lerp(this.velocity, this.movementVector, 0.1);
   }
 
   update(): void {
-    this.collider.moveWithCollisions(this.getMovementVector());
+    this.updateMovementVector();
+    this.updateVelocity();
+    this.collider.moveWithCollisions(this.velocity.scale(0.1));
   }
 }
