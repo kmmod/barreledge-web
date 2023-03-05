@@ -15,6 +15,7 @@ export class Player {
   velocity: Vector3;
   movementVector: Vector3;
   speed: number;
+  jumpSpeed: number;
   velocityDamping: number;
 
   constructor(scene: Scene, canvas: HTMLCanvasElement) {
@@ -25,7 +26,8 @@ export class Player {
     this.camera = this.createCamera();
     this.velocity = new Vector3(0, 0, 0);
     this.movementVector = new Vector3(0, 0, 0);
-    this.speed = 0.25;
+    this.speed = 0.15;
+    this.jumpSpeed = 0.18;
     this.velocityDamping = 0.1;
     this.init();
   }
@@ -37,18 +39,15 @@ export class Player {
   }
 
   private createCamera(): FreeCamera {
-    const camera = new FreeCamera(
-      "player",
-      new Vector3(0, 0.75, 0),
-      this.scene
-    );
-    camera.setTarget(new Vector3(2, 0.75, 0));
+    const camera = new FreeCamera("player", new Vector3(0, 0.5, 0), this.scene);
+    camera.setTarget(new Vector3(2, 0.5, 0));
     camera.attachControl(this.canvas, true);
     camera.speed = 0.0;
     camera.angularSensibility = 1500;
     camera.inertia = 0.65;
     camera.parent = this.collider;
-    camera.fov = 1.5;
+    camera.fov = 1.3;
+    camera.minZ = 0.1;
     return camera;
   }
 
@@ -103,7 +102,7 @@ export class Player {
 
   private updateVelocity(): void {
     if (this.isGrounded() && this.input.inputVector.y > 0.0) {
-      this.velocity.y = 0.25;
+      this.velocity.y = this.jumpSpeed;
     } else if (this.isGrounded()) {
       this.velocity.y = 0.0;
     } else {

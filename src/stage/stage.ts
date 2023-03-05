@@ -1,48 +1,69 @@
-import cannon from "cannon";
-import "@babylonjs/core/Materials/standardMaterial";
-import "@babylonjs/core/Collisions/collisionCoordinator";
-import "@babylonjs/core/Physics/physicsEngineComponent";
-import { CannonJSPlugin } from "@babylonjs/core/Physics/Plugins/cannonJSPlugin";
-import { CreateGround } from "@babylonjs/core/Meshes/Builders/groundBuilder";
-import { CreateSphere } from "@babylonjs/core/Meshes/Builders/sphereBuilder";
-import { Engine } from "@babylonjs/core/Engines/engine";
+import "@babylonjs/loaders";
+import { CreateBox, CreateGround, CreateSphere } from "@babylonjs/core/Meshes";
 import { HemisphericLight } from "@babylonjs/core/Lights/hemisphericLight";
 import { PhysicsImpostor } from "@babylonjs/core/Physics/v1/physicsImpostor";
 import { Scene } from "@babylonjs/core/scene";
-import { Vector3 } from "@babylonjs/core/Maths/math.vector";
+import { SceneLoader } from "@babylonjs/core/Loading";
+import { Texture } from "@babylonjs/core/Materials/Textures/texture";
+import { Vector3 } from "@babylonjs/core/Maths/math";
+import { PBRMetallicRoughnessMaterial } from "@babylonjs/core/Materials/PBR/pbrMetallicRoughnessMaterial";
+import { VertexBuffer } from "@babylonjs/core/Buffers/buffer";
+import { PhysicsViewer } from "@babylonjs/core/Debug/physicsViewer";
 
-import { Player } from "./player/player";
-import { CreateBox } from "@babylonjs/core/Meshes";
-import { Stage } from "./stage/stage";
-
-window.CANNON = cannon;
-
-class App {
-  canvas: HTMLCanvasElement;
-  engine: Engine;
+export class Stage {
   scene: Scene;
-  player: Player;
-  stage: any;
 
-  constructor() {
-    this.canvas = document.getElementById("renderCanvas") as HTMLCanvasElement;
-    this.engine = new Engine(this.canvas);
-    this.scene = this.createScene();
-    this.player = new Player(this.scene, this.canvas);
-    this.stage = new Stage(this.scene);
+  constructor(scene: Scene) {
+    this.scene = scene;
+    this.enviroment();
     this.init();
+    // this.createTestEnvironment();
   }
 
-  createScene(): Scene {
-    const scene = new Scene(this.engine);
-    const gravityVector = new Vector3(0, -9.81, 0);
-    const physicsPlugin = new CannonJSPlugin();
-    scene.enablePhysics(gravityVector, physicsPlugin);
-    // scene.forceWireframe = true;
-    return scene;
+  enviroment(): void {
+    const light = new HemisphericLight(
+      "light1",
+      new Vector3(0, 1, 0),
+      this.scene
+    );
+    light.intensity = 0.7;
   }
 
-  createEnvironment(): void {
+  init(): void {
+    const physicsViewer = new PhysicsViewer(this.scene);
+    const lightMap = new Texture("lightmap.png", this.scene);
+    lightMap.coordinatesIndex = 1;
+    lightMap.vScale = -1;
+
+    SceneLoader.ImportMesh(
+      null,
+      "",
+      "stage_test.gltf",
+      this.scene,
+      (meshes: any) => {
+        meshes
+          .filter((mesh: any) => mesh.geometry)
+          .forEach((mesh: any) => {
+            // TODO: Wonky physics - maybe switch to ammo.js? Or use own
+            // collision events calculations?
+
+            mesh.checkCollisions = true;
+            mesh.material.lightmapTexture = lightMap;
+            mesh.material.useLightmapAsShadowmap = true;
+            // mesh.physicsImpostor = new PhysicsImpostor(
+            //   mesh,
+            //   PhysicsImpostor.BoxImpostor,
+            //   { mass: 0, restitution: 0.9, friction: 0.5, ignoreParent: true },
+            //   this.scene
+            // );
+
+            // physicsViewer.showImpostor(mesh.physicsImpostor);
+          });
+      }
+    );
+  }
+
+  createTestEnvironment(): void {
     const light = new HemisphericLight(
       "light1",
       new Vector3(0, 1, 0),
@@ -120,20 +141,4 @@ class App {
       stair.checkCollisions = true;
     }
   }
-
-  init(): void {
-    this.canvas.addEventListener("click", () => {
-      this.canvas.requestPointerLock();
-    });
-
-    window.addEventListener("resize", () => {
-      this.engine.resize();
-    });
-
-    this.engine.runRenderLoop(() => {
-      this.scene.render();
-    });
-  }
 }
-
-new App();

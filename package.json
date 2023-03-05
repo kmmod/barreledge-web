@@ -17,6 +17,8 @@
   },
   "devDependencies": {
     "@babylonjs/core": "^5.49.0",
+    "@babylonjs/loaders": "^5.49.0",
+    "@babylonjs/materials": "^5.49.0",
     "@types/cannon": "^0.1.8",
     "@vitest/coverage-c8": "^0.28.5",
     "cannon": "^0.6.2",

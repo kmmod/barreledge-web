@@ -7,6 +7,16 @@
   resolved "https://registry.yarnpkg.com/@babylonjs/core/-/core-5.49.0.tgz#57cd6999ae1a1102799d490d8586ab8800d81f9b"
   integrity sha512-7DImzPWYqx8ZUIiBQbPMZWZOjCsNU1W50rGCEMg79vB1GJWicwoXG9fNCsnoK0P7vN6GhqpqwpKADYKQT/ngkg==
 
+"@babylonjs/loaders@^5.49.0":
+  version "5.49.0"
+  resolved "https://registry.yarnpkg.com/@babylonjs/loaders/-/loaders-5.49.0.tgz#756ec1375bf2efb1b74dcc39d276cf65ca96b6ef"
+  integrity sha512-jleQkRxYysTzmvztFgbjvc+2YD1nBP+trna5ot0ClZPlVifKVJGRPmd6NvFOjxzhrzcwNTxc1x91dwPhWl5Wvw==
+
+"@babylonjs/materials@^5.49.0":
+  version "5.49.0"
+  resolved "https://registry.yarnpkg.com/@babylonjs/materials/-/materials-5.49.0.tgz#f4e813c32971864c1849187a2747d29192ea9fa5"
+  integrity sha512-L00v6tw1KSqDSf5Uh2Ijsk1dU+ptLIbXFLXh2sdFulPG3OAlEwUHlEd9hV8x4qIQpYz4D5NuEW7PG82NH0cZgA==
+
 "@bcoe/v8-coverage@^0.2.3":
   version "0.2.3"
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
