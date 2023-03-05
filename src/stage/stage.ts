@@ -30,7 +30,7 @@ export class Stage {
     skyMaterial.turbidity = 120;
     skyMaterial.luminance = 0.25;
     skyMaterial.azimuth = 0.4;
-    skyMaterial.inclination = 0.49;
+    skyMaterial.inclination = 0.5;
     skyMaterial.mieDirectionalG = 0.4;
     skyMaterial.mieCoefficient = 0.005;
     skyMaterial.rayleigh = 0.1;
