@@ -1,14 +1,14 @@
 import "@babylonjs/loaders";
+import "@babylonjs/core/Helpers/sceneHelpers";
 import { CreateBox, CreateGround, CreateSphere } from "@babylonjs/core/Meshes";
 import { HemisphericLight } from "@babylonjs/core/Lights/hemisphericLight";
 import { PhysicsImpostor } from "@babylonjs/core/Physics/v1/physicsImpostor";
 import { Scene } from "@babylonjs/core/scene";
 import { SceneLoader } from "@babylonjs/core/Loading";
-import { Texture } from "@babylonjs/core/Materials/Textures/texture";
 import { Vector3 } from "@babylonjs/core/Maths/math";
-import { PBRMetallicRoughnessMaterial } from "@babylonjs/core/Materials/PBR/pbrMetallicRoughnessMaterial";
-import { VertexBuffer } from "@babylonjs/core/Buffers/buffer";
 import { PhysicsViewer } from "@babylonjs/core/Debug/physicsViewer";
+import { Texture } from "@babylonjs/core/Materials/Textures";
+import { SkyMaterial } from "@babylonjs/materials/sky";
 
 export class Stage {
   scene: Scene;
@@ -21,6 +21,20 @@ export class Stage {
   }
 
   enviroment(): void {
+    const skyMaterial = new SkyMaterial("sky", this.scene);
+    skyMaterial.backFaceCulling = false;
+
+    const skybox = CreateBox("skyBox", { size: 1000 }, this.scene);
+    skybox.material = skyMaterial;
+
+    skyMaterial.turbidity = 120;
+    skyMaterial.luminance = 0.25;
+    skyMaterial.azimuth = 0.4;
+    skyMaterial.inclination = 0.49;
+    skyMaterial.mieDirectionalG = 0.4;
+    skyMaterial.mieCoefficient = 0.005;
+    skyMaterial.rayleigh = 0.1;
+
     const light = new HemisphericLight(
       "light1",
       new Vector3(0, 1, 0),

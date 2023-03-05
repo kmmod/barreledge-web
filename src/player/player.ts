@@ -58,6 +58,7 @@ export class Player {
       this.scene
     );
     capsule.position.y = 5;
+    capsule.position.x = -3;
 
     // TODO: Create proper onCollision events
     capsule.onCollide = (collider) => {
