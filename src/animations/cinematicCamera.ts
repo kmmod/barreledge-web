@@ -2,6 +2,7 @@ import { FreeCamera } from "@babylonjs/core/Cameras/freeCamera";
 import { Vector3 } from "@babylonjs/core/Maths/math";
 import { Scene } from "@babylonjs/core/scene";
 import { Animation } from "@babylonjs/core/Animations/animation";
+import { EasingFunction, QuadraticEase } from "@babylonjs/core/Animations/easing";
 
 export class CinematicCamera {
   scene: Scene;
@@ -16,6 +17,8 @@ export class CinematicCamera {
     this.camera = this.createCamera();
     this.pos_animation = this.createAnimation("pos", "position");
     this.rot_animation = this.createAnimation("rot", "rotation");
+    this.fillAnimation();
+    this.playAnimation();
   }
 
   createCamera(): FreeCamera {
@@ -34,7 +37,7 @@ export class CinematicCamera {
     const animation = new Animation(
       name,
       property,
-      30,
+      10,
       Animation.ANIMATIONTYPE_VECTOR3,
       Animation.ANIMATIONLOOPMODE_CYCLE
     );
@@ -42,9 +45,37 @@ export class CinematicCamera {
     return animation;
   }
 
-  fillAnimation(): void {}
+  fillAnimation(): void {
+    const pos_keys = [
+      {
+        frame: 0,
+        value: new Vector3(0, 2, 0),
+        outTangent: new Vector3(0, 0, -1),
+      },
+      {
+        frame: 30,
+        value: new Vector3(-8, 2, 4),
+        inTangent: new Vector3(0, 0, 1),
+        outTangent: new Vector3(0, 0, 1),
+      },
+      {
+        frame: 60,
+        value: new Vector3(0, 2, 0),
+        inTangent: new Vector3(0, 0, -1),
+      },
+    ];
+    this.pos_animation.setKeys(pos_keys);
 
-  playAnimation(): void {}
+    const easing = new QuadraticEase();
+    easing.setEasingMode(EasingFunction.EASINGMODE_EASEINOUT);
+
+    // this.pos_animation.setEasingFunction(easing);
+  }
+
+  playAnimation(): void {
+    this.camera.animations = [this.pos_animation];
+    this.scene.beginAnimation(this.camera, 0, 60, true, 0.5);
+  }
 
   stopAnimation(): void {}
 }
