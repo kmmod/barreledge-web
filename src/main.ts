@@ -14,6 +14,7 @@ import { Vector3 } from "@babylonjs/core/Maths/math.vector";
 import { Player } from "./player/player";
 import { CreateBox } from "@babylonjs/core/Meshes";
 import { Stage } from "./stage/stage";
+import { CinematicCamera } from "./animations/cinematicCamera";
 
 window.CANNON = cannon;
 
@@ -23,6 +24,7 @@ class App {
   scene: Scene;
   player: Player;
   stage: any;
+  cinematicCamera: CinematicCamera;
 
   constructor() {
     this.canvas = document.getElementById("renderCanvas") as HTMLCanvasElement;
@@ -30,6 +32,7 @@ class App {
     this.scene = this.createScene();
     this.player = new Player(this.scene, this.canvas);
     this.stage = new Stage(this.scene);
+    this.cinematicCamera = new CinematicCamera(this.scene, this.canvas);
     this.init();
   }
 
