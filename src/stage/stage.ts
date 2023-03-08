@@ -55,14 +55,14 @@ export class Stage {
 
   init(): void {
     const physicsViewer = new PhysicsViewer(this.scene);
-    const lightMap = new Texture("lightmap.png", this.scene);
+    const lightMap = new Texture("round-lightmap.png", this.scene);
     lightMap.coordinatesIndex = 1;
     lightMap.vScale = -1;
 
     SceneLoader.ImportMesh(
       null,
       "",
-      "stage_test.gltf",
+      "round.gltf",
       this.scene,
       (meshes: any) => {
         meshes

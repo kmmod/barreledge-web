@@ -28,7 +28,7 @@ export class CinematicCamera {
       this.scene
     );
     camera.fov = 1.2;
-    this.scene.activeCamera = camera;
+    // this.scene.activeCamera = camera;
     camera.setTarget(new Vector3(2, 2, 0));
     return camera;
   }
